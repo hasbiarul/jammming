@@ -11,7 +11,7 @@ class App extends Component {
       super(props);
       this.state = {
           searchResults: [],
-          playlistName: "New Playlist",
+          playlistName: "",
           playlistTracks: []
       };
       this.addTrack = this.addTrack.bind(this);
@@ -29,18 +29,24 @@ class App extends Component {
   }
     
   addTrack(track) {
-     this.state.playlistTracks.forEach(function(playlistTrack) {
-        if (track.id === playlistTrack.id) {
-            this.setState({
-                playlistTracks: this.state.playlistTracks 
-            });
-        } else {
-            this.state.playlistTracks[this.state.playlistTracks.length] = track;
-            this.setState({
-               playlistTracks: this.state.playlistTracks 
-            });
+     if (this.state.playlistTracks.length === 0) {
+         console.log("It Works !");
+         this.state.playlistTracks.push(track);
+         this.setState({ 
+            playlistTracks: this.state.playlistTracks 
+         });
+     } else {
+        for (var i = 0; i < this.state.playlistTracks.length; i++) {
+            if (track.id === this.state.playlistTracks[i].id) {
+                console.log("Track already inside playlist.");
+                return;
+            } 
         }
-     });
+        this.state.playlistTracks.push(track);
+        this.setState({
+            playlistTracks: this.state.playlistTracks
+        })
+     }
   }
     
   removeTrackHelper(tracksArray, element) {
@@ -61,7 +67,13 @@ class App extends Component {
       var trackURIs = this.state.playlistTracks.map(function(track){
             return track.uri; 
       });
-      return trackURIs;
+      Spotify.savePlaylist(this.state.playlistName, trackURIs).then(() => {
+          this.setState({
+            playlistName: "New Playlist",
+            playlistTracks: []
+          });
+      });
+      
   }
     
   search(term) {
