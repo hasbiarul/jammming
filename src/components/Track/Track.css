@@ -1,7 +1,7 @@
 .Track {
   display: flex;
   align-items: center;
-  border-bottom: 1px solid rgba(256, 256, 256, 0.8);
+  /*border-bottom: 1px solid rgba(256, 256, 256, 0.8);*/
 }
 
 .Track-action {
@@ -31,4 +31,10 @@
   font-size: .83rem;
   font-weight: 300;
   color: rgba(256, 256, 256, 0.8);
+}
+
+iframe {
+    width: 100%;
+    margin: 0;
+    background: none !Important;
 }

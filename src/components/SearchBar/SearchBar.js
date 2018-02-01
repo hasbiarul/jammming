@@ -10,11 +10,12 @@ export class SearchBar extends React.Component {
         }
         this.search = this.search.bind(this);
         this.handleTermChange = this.handleTermChange.bind(this);
+        this.triggerInputWithEnter = this.triggerInputWithEnter.bind(this);
     }
     
-    search() {
-        console.log(this.state.term);
+    search(event) {
         this.props.onSearch(this.state.term);
+        event.preventDefault();
     }
     
     handleTermChange(event) {
@@ -23,9 +24,20 @@ export class SearchBar extends React.Component {
         });
     }
     
+    /* ----- Pressing enter triggers a search ----- */
+    // ----- Hope what I'm doing is just fine ----- :)
+    
+    triggerInputWithEnter(event) {
+        var keyPressedType = event.key;
+        if (keyPressedType === "Enter") {
+            this.props.onSearch(this.state.term);
+            event.preventDefault();
+        } else return;
+    }
+    
     render() {
         return (<div className="SearchBar">
-                  <input placeholder="Enter A Song, Album, or Artist" onChange={this.handleTermChange} />
+                  <input id="searchInput" placeholder="Enter A Song, Album, or Artist" onChange={this.handleTermChange} onKeyPress={this.triggerInputWithEnter}/>
                   <a onClick={this.search}>SEARCH</a>
                 </div>
         );

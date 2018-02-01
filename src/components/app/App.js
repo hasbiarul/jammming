@@ -11,8 +11,9 @@ class App extends Component {
       super(props);
       this.state = {
           searchResults: [],
-          playlistName: "",
-          playlistTracks: []
+          playlistName: "New Playlist",
+          playlistTracks: [],
+          addRemoveTracks: []
       };
       this.addTrack = this.addTrack.bind(this);
       this.removeTrack = this.removeTrack.bind(this);
@@ -20,6 +21,8 @@ class App extends Component {
       this.updatePlaylistName = this.updatePlaylistName.bind(this);
       this.savePlaylist = this.savePlaylist.bind(this);
       this.search = this.search.bind(this);
+      this.trackFilterHelper = this.trackFilterHelper.bind(this);
+      this.playlistTrackFilterHelper = this.playlistTrackFilterHelper.bind(this);
   }
     
   updatePlaylistName(name) {
@@ -30,7 +33,6 @@ class App extends Component {
     
   addTrack(track) {
      if (this.state.playlistTracks.length === 0) {
-         console.log("It Works !");
          this.state.playlistTracks.push(track);
          this.setState({ 
             playlistTracks: this.state.playlistTracks 
@@ -45,8 +47,9 @@ class App extends Component {
         this.state.playlistTracks.push(track);
         this.setState({
             playlistTracks: this.state.playlistTracks
-        })
+        });
      }
+     this.trackFilterHelper(); /* <-- Invoked. */
   }
     
   removeTrackHelper(tracksArray, element) {
@@ -55,12 +58,39 @@ class App extends Component {
       });
       return trackContainer;
   }
+  
+  /* Only display songs not currently present in the playlist in the search results. */
+  // Hope what I'm doing is just fine. 
+  trackFilterHelper() {
+      var _this = this;
+      var container = this.state.searchResults.filter(function(track) {
+            for (var i = 0; i < _this.state.playlistTracks.length; i++) {
+                if (track.id === _this.state.playlistTracks[i].id) {
+                    return;
+                }
+            }
+            return track;  
+      });
+      this.setState({
+         searchResults: container
+      });
+  }
+  
+  /* Return track inside playlist to search result track, whenever '-' button get clicked. */
+  // Hope what I'm doing is just fine.
+  playlistTrackFilterHelper(trackRemoved) {
+      this.state.searchResults.unshift(trackRemoved);
+      this.setState({
+          searchResults: this.state.searchResults
+      });
+  }
     
   removeTrack(track) {
       var afterRemoveATrack = this.removeTrackHelper(this.state.playlistTracks, track);
       this.setState({
         playlistTracks: afterRemoveATrack
       });
+      this.playlistTrackFilterHelper(track); /* <-- Invoked. */
   }
     
   savePlaylist() {
@@ -73,7 +103,6 @@ class App extends Component {
             playlistTracks: []
           });
       });
-      
   }
     
   search(term) {
@@ -90,7 +119,7 @@ class App extends Component {
           <h1>Ja<span className="highlight">mmm</span>ing</h1>
           <div className="App">
              {/* Add a SearchBar component */}
-             <SearchBar onSearch={this.search}/>
+             <SearchBar onSearch={this.search} onCheckPlaylist={this.getAllPlaylist} onBlockTrack={this.blockedTrackInSearchResult}/>
              <div className="App-playlist"> 
              {/* Add a SearchResult component */}
              <SearchResults searchResults={this.state.searchResults} onAdd={this.addTrack} />

@@ -2,10 +2,10 @@ let userAccessToken = '',
     regExAccessToken = /access_token=([^&]*)/,
     regExExpiresIn = /expires_in=([^&]*)/,
     clientId = '6bf60ee5d5654b61b20bd16e9a195522',
-    redirectURI = 'http://arul-jammming.surge.sh';
+    redirectURI = 'http://localhost:3000/';
 
 let Spotify = {
-    getAccessToken: function() {
+    getAccessToken() {
         if (userAccessToken) {    
             return userAccessToken;
         } else if (!userAccessToken) {
@@ -25,7 +25,7 @@ let Spotify = {
         }
     },
     
-    search: function(term) {
+    search(term) {
         let getUserAccessToken = Spotify.getAccessToken();
         return fetch(`https://api.spotify.com/v1/search?type=track&q=${term}`,{
             headers: {
@@ -50,7 +50,7 @@ let Spotify = {
         });
     },
     
-    savePlaylist: function(playlistName, trackURIs) {
+    savePlaylist(playlistName, trackURIs) {
         let accessToken = Spotify.getAccessToken();
         let headers = {
             Authorization: `Bearer ${accessToken}`,
